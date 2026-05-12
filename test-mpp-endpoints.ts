@@ -7,13 +7,14 @@
  * mppx/client handles the 402 → sign → retry flow automatically.
  *
  * Requirements:
- *   PRIVATE_KEY   — hex private key for a wallet that holds pathUSD on Tempo testnet
- *                   Faucet: https://agentpay.alchemy.com/docs (testnet faucet section)
+ *   .env file with PRIVATE_KEY set to a hex private key for a wallet that holds
+ *   pathUSD on Tempo testnet. Copy .env.example to .env and fill it in.
  *
  * Run:
- *   PRIVATE_KEY=0x... npm test
+ *   npm test
  */
 
+import 'dotenv/config'
 import { Mppx, tempo } from 'mppx/client'
 import { privateKeyToAccount } from 'viem/accounts'
 
@@ -36,8 +37,7 @@ const SELL_AMOUNT = '1000000000000000'                            // 0.001 WETH
 
 const PRIVATE_KEY = process.env.PRIVATE_KEY as `0x${string}` | undefined
 if (!PRIVATE_KEY) {
-  console.error('Error: PRIVATE_KEY environment variable is required.')
-  console.error('Usage: PRIVATE_KEY=0x<hex> npm test')
+  console.error('Error: PRIVATE_KEY not set. Copy .env.example to .env and add your key.')
   process.exit(1)
 }
 
