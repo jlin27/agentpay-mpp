@@ -35,13 +35,14 @@ const SELL_AMOUNT = '1000000000000000'                            // 0.001 WETH
 
 // ─── Setup ────────────────────────────────────────────────────────────────────
 
-const PRIVATE_KEY = process.env.PRIVATE_KEY as `0x${string}` | undefined
-if (!PRIVATE_KEY) {
-  console.error('Error: PRIVATE_KEY not set. Copy .env.example to .env and add your key.')
+const PRIVATE_KEY = process.env.PRIVATE_KEY
+if (!PRIVATE_KEY || !/^0x[0-9a-fA-F]{64}$/.test(PRIVATE_KEY)) {
+  console.error('Error: PRIVATE_KEY must be a 32-byte hex string (0x + 64 hex chars).')
+  console.error('Edit .env and set PRIVATE_KEY=0x<your-64-char-hex-key>')
   process.exit(1)
 }
 
-const account = privateKeyToAccount(PRIVATE_KEY)
+const account = privateKeyToAccount(PRIVATE_KEY as `0x${string}`)
 console.log(`Wallet: ${account.address}`)
 
 const mppx = Mppx.create({
