@@ -3,12 +3,12 @@
  *   - swap-allowance-holder-price  (indicative price, no taker required)
  *   - swap-allowance-holder-quote  (firm quote, requires taker address)
  *
- * The proxy enforces payment via the MPP Tempo Testnet protocol (chainId 42431).
+ * The proxy enforces payment via the MPP Tempo Mainnet protocol (chainId 4217).
  * mppx/client handles the 402 → sign → retry flow automatically.
  *
  * Requirements:
  *   .env file with PRIVATE_KEY set to a hex private key for a wallet that holds
- *   pathUSD on Tempo testnet. Copy .env.example to .env and fill it in.
+ *   USDC.e on Tempo Mainnet. Copy .env.example to .env and fill it in.
  *
  * Run:
  *   npm test
@@ -16,7 +16,10 @@
 
 import 'dotenv/config'
 import { Mppx, tempo } from 'mppx/client'
+import { Credential } from 'mppx'
 import { privateKeyToAccount } from 'viem/accounts'
+
+const TEMPO_EXPLORER = 'https://explore.tempo.xyz'
 
 // ─── Endpoints ────────────────────────────────────────────────────────────────
 
@@ -45,15 +48,23 @@ if (!PRIVATE_KEY || !/^0x[0-9a-fA-F]{64}$/.test(PRIVATE_KEY)) {
 const account = privateKeyToAccount(PRIVATE_KEY as `0x${string}`)
 console.log(`Wallet: ${account.address}`)
 
+let lastPaymentTxHash: string | undefined
+
 const mppx = Mppx.create({
   methods: [
     tempo.charge({
       account,
-      // pull mode: sign the tx locally, proxy broadcasts it
-      mode: 'pull',
+      // push mode: client broadcasts the tx and sends the hash to the proxy
+      mode: 'push',
     }),
   ],
   polyfill: false,
+  async onChallenge(_challenge, { createCredential }) {
+    const serialized = await createCredential()
+    const { payload } = Credential.deserialize<{ type: string; hash?: string }>(serialized)
+    if (payload.type === 'hash' && payload.hash) lastPaymentTxHash = payload.hash
+    return serialized
+  },
 })
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -62,6 +73,11 @@ function printSection(title: string) {
   console.log(`\n${'─'.repeat(60)}`)
   console.log(` ${title}`)
   console.log('─'.repeat(60))
+}
+
+function printPaymentTx() {
+  if (lastPaymentTxHash)
+    console.log(`  payment tx                 ${TEMPO_EXPLORER}/tx/${lastPaymentTxHash}`)
 }
 
 function printResult(label: string, value: unknown) {
@@ -99,6 +115,7 @@ async function testPrice() {
   }
 
   console.log(`  PASS  HTTP ${res.status}`)
+  printPaymentTx()
   printResult('sellAmount', body.sellAmount)
   printResult('buyAmount', body.buyAmount)
   printResult('estimatedPriceImpact', body.estimatedPriceImpact)
@@ -139,6 +156,7 @@ async function testQuote() {
   }
 
   console.log(`  PASS  HTTP ${res.status}`)
+  printPaymentTx()
   printResult('sellAmount', body.sellAmount)
   printResult('buyAmount', body.buyAmount)
   printResult('estimatedPriceImpact', body.estimatedPriceImpact)
