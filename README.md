@@ -14,9 +14,10 @@ Both endpoints proxy the [0x Swap API v2](https://0x.org) (AllowanceHolder flow)
 ## How it works
 
 1. Client sends a request → proxy responds with HTTP 402 and a Tempo payment challenge
-2. [`mppx/client`](https://github.com/wevm/mppx) signs a transaction on Tempo Mainnet (chainId 4217) using your wallet
-3. Client retries with `Authorization: Payment <credential>` header
+2. [`mppx/client`](https://github.com/wevm/mppx) broadcasts a payment transaction on Tempo Mainnet (chainId 4217) and captures the tx hash
+3. Client retries with `Authorization: Payment <credential>` header containing the tx hash
 4. Proxy verifies the payment and forwards to the 0x API
+5. The tx hash is printed as a link to [explore.tempo.xyz](https://explore.tempo.xyz)
 
 ## Prerequisites
 
@@ -63,8 +64,9 @@ Payment channel: Tempo Mainnet (USDC.e)
  Test 1: swap-allowance-holder-price
 ────────────────────────────────────────────────────────────
   PASS  HTTP 200
+  payment tx                 https://explore.tempo.xyz/tx/0x303e6ac14cd303981a3562491fb28c1014fd73f34060f3830311eb7920b2551a
   sellAmount                 1000000000000000
-  buyAmount                  2114642
+  buyAmount                  2121484
   estimatedPriceImpact       (none)
   liquidityAvailable         true
   issues.balance             (none)
@@ -74,12 +76,13 @@ Payment channel: Tempo Mainnet (USDC.e)
  Test 2: swap-allowance-holder-quote
 ────────────────────────────────────────────────────────────
   PASS  HTTP 200
+  payment tx                 https://explore.tempo.xyz/tx/0x5f13f3653877566797d2267acc2965a5b5d450a92bc29c203542c2dd36cb8f5f
   sellAmount                 1000000000000000
-  buyAmount                  2115064
+  buyAmount                  2121484
   estimatedPriceImpact       (none)
   liquidityAvailable         true
   transaction.to             0x0000000000001ff3684f28c67538d4d072c22734
-  transaction.gas            321419
-  transaction.gasPrice       7425000
+  transaction.gas            331507
+  transaction.gasPrice       8125000
   transaction.data (first 10) 0x2213bc0b…
 ```
