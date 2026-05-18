@@ -14,7 +14,7 @@ Both endpoints proxy the [0x Swap API v2](https://0x.org) (AllowanceHolder flow)
 ## How it works
 
 1. Client sends a request → proxy responds with HTTP 402 and a Tempo payment challenge
-2. [`mppx/client`](https://github.com/wevm/mppx) signs a transaction on Tempo Testnet (chainId 42431) using your wallet
+2. [`mppx/client`](https://github.com/wevm/mppx) signs a transaction on Tempo Mainnet (chainId 4217) using your wallet
 3. Client retries with `Authorization: Payment <credential>` header
 4. Proxy verifies the payment and forwards to the 0x API
 
@@ -53,7 +53,7 @@ const SELL_AMOUNT = '...'   // amount in token base units
 ## Example output
 
 ```
-Wallet: 0x1Be31A94361a391bBaFB2a4CCd704F57dc04d4bb
+Wallet: 0xb15a55e85FdF5edc41B6c1eaf7813e2c6e6def59
 
 AgentPay MPP Endpoint Tests
 Using 0x AllowanceHolder swap flow on Base (chainId 8453)
@@ -64,16 +64,22 @@ Payment channel: Tempo Mainnet (USDC.e)
 ────────────────────────────────────────────────────────────
   PASS  HTTP 200
   sellAmount                 1000000000000000
-  buyAmount                  2282736
+  buyAmount                  2114642
+  estimatedPriceImpact       (none)
   liquidityAvailable         true
+  issues.balance             (none)
+  issues.allowance           {"actual":"0","spender":"0x0000000000001ff3684f28c67538d4d072c22734"}
 
 ────────────────────────────────────────────────────────────
  Test 2: swap-allowance-holder-quote
 ────────────────────────────────────────────────────────────
   PASS  HTTP 200
   sellAmount                 1000000000000000
-  buyAmount                  2283420
+  buyAmount                  2115064
+  estimatedPriceImpact       (none)
   liquidityAvailable         true
   transaction.to             0x0000000000001ff3684f28c67538d4d072c22734
-  transaction.gas            276162
+  transaction.gas            321419
+  transaction.gasPrice       7425000
+  transaction.data (first 10) 0x2213bc0b…
 ```
