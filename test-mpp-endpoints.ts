@@ -21,7 +21,7 @@ import { privateKeyToAccount } from 'viem/accounts'
 // ─── Endpoints ────────────────────────────────────────────────────────────────
 
 const BASE_URL =
-  'https://agent-proxy.alchemy.com/v1/mpp-tempo-testnet/86b0ec6d1d0b3dc0'
+  'https://agent-proxy.alchemy.com/v1/mpp-tempo/86b0ec6d1d0b3dc0'
 
 const PRICE_URL = `${BASE_URL}/swap-allowance-holder-price/`
 const QUOTE_URL = `${BASE_URL}/swap-allowance-holder-quote/`
@@ -66,7 +66,11 @@ function printSection(title: string) {
 
 function printResult(label: string, value: unknown) {
   const display =
-    value === undefined || value === null ? '(none)' : String(value)
+    value === undefined || value === null
+      ? '(none)'
+      : typeof value === 'object'
+      ? JSON.stringify(value)
+      : String(value)
   console.log(`  ${label.padEnd(26)} ${display}`)
 }
 
@@ -162,7 +166,7 @@ async function testQuote() {
 async function main() {
   console.log('\nAgentPay MPP Endpoint Tests')
   console.log('Using 0x AllowanceHolder swap flow on Base (chainId 8453)')
-  console.log('Payment channel: Tempo Testnet (chainId 42431, pathUSD)\n')
+  console.log('Payment channel: Tempo Mainnet (USDC.e)\n')
 
   const results: boolean[] = []
   results.push(await testPrice())

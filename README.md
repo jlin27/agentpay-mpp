@@ -9,7 +9,7 @@ Test script for [AgentPay](https://agentpay.alchemy.com) MPP-wrapped 0x swap end
 | `swap-allowance-holder-price` | Indicative price (no taker required) |
 | `swap-allowance-holder-quote` | Firm quote with transaction calldata |
 
-Both endpoints proxy the [0x Swap API v2](https://0x.org) (AllowanceHolder flow) and require a micro-payment via the **MPP Tempo Testnet** protocol before returning a response.
+Both endpoints proxy the [0x Swap API v2](https://0x.org) (AllowanceHolder flow) and require a micro-payment via the **MPP Tempo Mainnet** protocol before returning a response.
 
 ## How it works
 
@@ -20,7 +20,7 @@ Both endpoints proxy the [0x Swap API v2](https://0x.org) (AllowanceHolder flow)
 
 ## Prerequisites
 
-- A wallet with **pathUSD** on Tempo Testnet (chainId 42431)
+- A wallet with **USDC.e** (0x20C000000000000000000000b9537d11c60E8b50) on Tempo Mainnet
 - Node.js 18+
 
 ## Setup
@@ -57,7 +57,7 @@ Wallet: 0x1Be31A94361a391bBaFB2a4CCd704F57dc04d4bb
 
 AgentPay MPP Endpoint Tests
 Using 0x AllowanceHolder swap flow on Base (chainId 8453)
-Payment channel: Tempo Testnet (chainId 42431, pathUSD)
+Payment channel: Tempo Mainnet (USDC.e)
 
 ────────────────────────────────────────────────────────────
  Test 1: swap-allowance-holder-price
